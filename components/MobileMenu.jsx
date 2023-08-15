@@ -1,17 +1,16 @@
 import Wrapper from "./Wrapper";
-import { FaRegUser, FaChevronRight } from "react-icons/fa";
+import { FaRegUser, FaChevronRight, FaRegHeart } from "react-icons/fa";
 import { HiX } from "react-icons/hi";
 import { RxDotFilled } from "react-icons/rx";
 import { AiOutlineFileText } from "react-icons/ai";
 import { IoLocationOutline } from "react-icons/io5";
 import { BiUser, BiCategory } from "react-icons/bi";
-import { FiTag } from "react-icons/fi";
 import Link from "next/link";
 
 const MobileMenu = ({ showMobileMenu, setShowMobileMenu }) => {
   return (
     <aside
-      className={`absolute ${
+      className={`fixed ${
         showMobileMenu ? "left-0" : "-left-full"
       } top-0 h-full w-full max-w-lg bg-white z-10 transition-[left] duration-500`}
     >
@@ -36,17 +35,23 @@ const MobileMenu = ({ showMobileMenu, setShowMobileMenu }) => {
       </div>
       <div>
         <Wrapper>
-          <Link href="/" className="flex justify-between items-center mt-6">
-            <span className="flex items-center font-bold text-sm">
+          <Link
+            href="/categories"
+            className="flex justify-between items-center mt-6"
+          >
+            <span className="flex items-center gap-1 font-bold text-sm">
               <BiCategory size={25} />
-              &nbsp;Categories
+              Categories
             </span>
             <FaChevronRight />
           </Link>
-          <Link href="/" className="flex justify-between items-center mt-6">
-            <span className="flex items-center font-bold text-sm">
-              <FiTag size={22} />
-              &nbsp;Offers Zone
+          <Link
+            href="/wishlist"
+            className="flex justify-between items-center mt-6"
+          >
+            <span className="flex items-center gap-2 font-bold text-sm">
+              <FaRegHeart size={22} />
+              My Wishlist
             </span>
             <FaChevronRight />
           </Link>
@@ -55,24 +60,23 @@ const MobileMenu = ({ showMobileMenu, setShowMobileMenu }) => {
       </div>
       <div>
         <Wrapper>
-          <Link href="/" className="flex justify-between items-center mt-6">
-            <span className="flex items-center font-bold text-sm">
+          <Link
+            href="/orders"
+            className="flex justify-between items-center mt-6"
+          >
+            <span className="flex items-center gap-1 font-bold text-sm">
               <AiOutlineFileText size={25} />
-              &nbsp;Order History
+              Order History
             </span>
             <FaChevronRight />
           </Link>
-          <Link href="/" className="flex justify-between items-center mt-6">
-            <span className="flex items-center font-bold text-sm">
+          <Link
+            href="/address"
+            className="flex justify-between items-center mt-6"
+          >
+            <span className="flex items-center gap-1 font-bold text-sm">
               <IoLocationOutline size={25} />
-              &nbsp;Saved Addresses
-            </span>
-            <FaChevronRight />
-          </Link>
-          <Link href="/" className="flex justify-between items-center mt-6">
-            <span className="flex items-center font-bold text-sm">
-              <BiUser size={25} />
-              &nbsp;Profile Details
+              Saved Addresses
             </span>
             <FaChevronRight />
           </Link>

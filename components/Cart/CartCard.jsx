@@ -1,16 +1,16 @@
 import Image from "next/image";
 import { HiOutlineTrash } from "react-icons/hi";
 
-const CartCard = () => {
+const CartCard = ({ image }) => {
   return (
-    <div className="bg-white flex items-center mt-4 p-2 xs:p-0 border-[1px] h-36 md:rounded-md md:w-3/4 md:mx-auto lg:w-11/12">
-      <div className="w-1/4 xs:p-2 rounded-l-md h-full">
+    <div className="bg-white mb-4 p-2 xs:p-0 border-[1px] h-36 rounded-md md:w-3/4 md:mx-auto lg:w-11/12 flex items-center">
+      <div className="w-1/4 xs:p-2 rounded-l-md h-full bg-white">
         <Image
-          src="https://res.cloudinary.com/dybxysxcl/image/upload/v1688062803/611PHgj6q4L._SL1500_-removebg-preview_xjj0zj.png"
+          src={image}
           alt="Whey Protein"
-          width="50"
-          height="50"
-          className="h-full w-full object-contain"
+          width={500}
+          height={500}
+          className="h-full object-contain saturate-150 brightness-105 mix-blend-multiply"
         />
       </div>
       <div className="ml-4 md:ml-0 h-full flex flex-col justify-evenly md:p-3">

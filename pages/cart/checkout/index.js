@@ -1,15 +1,12 @@
 import { TbTruckDelivery } from "react-icons/tb";
 import CartCard from "@/components/Cart/CartCard";
-import CouponModal from "@/components/Modal";
-import { useState } from "react";
 
 import CartPageSkeleton from "@/components/Cart/CartPage";
-const Cart = () => {
-  const [showCouponModal, setShowCouponModal] = useState(false);
 
+const Cart = () => {
   return (
     <>
-      <CartPageSkeleton setShowCouponModal={setShowCouponModal}>
+      <CartPageSkeleton>
         <div className="flex items-center gap-2 bg-white py-2 px-4 mt-3 md:rounded-md md:w-3/4 md:mx-auto lg:w-11/12">
           <TbTruckDelivery size={20} />
           <p className="text-xs font-medium">
@@ -17,15 +14,11 @@ const Cart = () => {
           </p>
         </div>
         <div className="my-4">
-          <CartCard />
-          <CartCard />
+          <CartCard image="/optimum.jpg" />
+          <CartCard image="/MuscleBlaze.jpg" />
         </div>
       </CartPageSkeleton>
       {/* When cart is filled */}
-      <CouponModal
-        showCouponModal={showCouponModal}
-        setShowCouponModal={setShowCouponModal}
-      />
     </>
   );
 };

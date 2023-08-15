@@ -51,8 +51,8 @@ const Menu = () => {
     },
     {
       id: 3,
-      name: "Offers",
-      link: "/offers",
+      name: "Wishlist",
+      link: "/wishlist",
     },
   ];
 

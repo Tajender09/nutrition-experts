@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiSearch, BiCategory } from "react-icons/bi";
 import { FiTag } from "react-icons/fi";
+import { FaRegHeart } from "react-icons/fa";
 import Wrapper from "./Wrapper";
 import { useRouter } from "next/router";
 
@@ -23,6 +24,16 @@ export const buttonDetails = {
     btnText: "Pay Now",
   },
 };
+
+const navigationAllowedRoutes = [
+  "/",
+  "/search",
+  "/categories",
+  "/wishlist",
+  "/cart/checkout",
+  "/cart/address",
+  "/cart/payment",
+];
 
 const BottomNavigation = () => {
   const router = useRouter();
@@ -47,13 +58,13 @@ const BottomNavigation = () => {
     },
     {
       id: 4,
-      label: "Offers",
-      icon: <FiTag size={22} className="mx-auto" />,
-      link: "/offers",
+      label: "Wishlist",
+      icon: <FaRegHeart size={22} className="mx-auto" />,
+      link: "/wishlist",
     },
   ];
 
-  return (
+  return navigationAllowedRoutes.includes(router.pathname) ? (
     //shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]
     <div className="h-16 w-full flex items-center fixed bottom-0 border-b-[1px] bg-white shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] lg:hidden">
       <Wrapper className="flex items-center justify-between">
@@ -84,6 +95,8 @@ const BottomNavigation = () => {
         )}
       </Wrapper>
     </div>
+  ) : (
+    <></>
   );
 };
 

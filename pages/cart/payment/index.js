@@ -30,7 +30,7 @@ const Payment = () => {
           {paymentMethods.map((mode) => (
             <li
               key={mode.id}
-              className="border-t-2 flex items-center p-4 gap-1"
+              className="border-t-2 flex items-center p-4 gap-1 relative"
             >
               <input
                 type="radio"
@@ -48,6 +48,13 @@ const Payment = () => {
               >
                 {mode.text}
               </label>
+              {mode.isDisabled ? (
+                <span className="absolute right-4 text-xs border-[1px] font-semibold border-primary text-primary rounded-2xl px-2 py-1">
+                  Coming soon
+                </span>
+              ) : (
+                <></>
+              )}
             </li>
           ))}
         </ul>

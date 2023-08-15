@@ -7,18 +7,13 @@ const UserIcon = () => {
   const userMenuList = [
     {
       id: 1,
-      link: "/",
+      link: "/orders",
       name: "Order History",
     },
     {
       id: 2,
-      link: "/",
+      link: "/address",
       name: "Saved Addresses",
-    },
-    {
-      id: 3,
-      link: "/",
-      name: "Profile Details",
     },
     {
       id: 4,

@@ -17,13 +17,21 @@ const Header = ({ setShowMobileMenu }) => {
   const router = useRouter();
   const headerTitles = {
     categories: "Shop by Categories",
-    offers: "Offers Zone",
+    wishlist: "My Wishlist",
     cart: "My Cart",
+    success: "Order Placed",
+    failed: "Payment Failed",
+    address: "My Addresses",
+    orders: "My Orders",
   };
   const activeTabStyles = "text-primary bg-secondary border-primary";
   const inActiveTabStyles = "text-disabled bg-dim_grey border-disabled";
 
-  return (
+  const nonHeaderRoutes = ["/login", "/signup"];
+
+  return nonHeaderRoutes.some((route) => route === router.pathname) ? (
+    <></>
+  ) : (
     <header
       className={`w-full ${
         router.pathname.includes("/cart") ? "h-full py-4" : "h-14 md:h-20"
@@ -71,7 +79,7 @@ const Header = ({ setShowMobileMenu }) => {
             priority
             width="150"
             height="50"
-            style={{ width: "auto", height: "auto" }}
+            className="h-auto w-auto"
           />
         </Link>
         {/* Company Logo */}
