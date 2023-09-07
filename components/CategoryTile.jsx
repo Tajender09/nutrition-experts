@@ -1,10 +1,24 @@
 import Image from "next/image";
 import { BiChevronRight } from "react-icons/bi";
+import Link from "next/link";
 
 const CategoryTile = ({ categoryData }) => {
-  const { id, name, image, theme } = categoryData;
+  const {
+    attributes: {
+      name,
+      theme,
+      slug,
+      thumbnail: {
+        data: {
+          attributes: { url },
+        },
+      },
+    },
+  } = categoryData;
+
   return (
-    <div
+    <Link
+      href={`/categories/${slug}`}
       style={{ backgroundColor: theme }}
       className="mt-8 w-2/5 h-[30vh] rounded-md shadow-md"
     >
@@ -14,14 +28,14 @@ const CategoryTile = ({ categoryData }) => {
       </p>
       <div className="h-2/3 mt-4 flex items-center justify-center">
         <Image
-          src={image}
+          src={url}
           alt={name}
           width="50"
           height="50"
           className="h-full w-full object-contain"
         />
       </div>
-    </div>
+    </Link>
   );
 };
 

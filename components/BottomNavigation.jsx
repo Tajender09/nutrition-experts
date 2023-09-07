@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiSearch, BiCategory } from "react-icons/bi";
-import { FiTag } from "react-icons/fi";
 import { FaRegHeart } from "react-icons/fa";
 import Wrapper from "./Wrapper";
 import { useRouter } from "next/router";

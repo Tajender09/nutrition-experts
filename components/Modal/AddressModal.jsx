@@ -1,5 +1,6 @@
 import { LiaTimesSolid } from "react-icons/lia";
 import { useState, useEffect } from "react";
+import { capitalize } from "@/utils/helper";
 
 const AddressModal = ({ setShowModal }) => {
   const handleCloseModal = (e) => {
@@ -92,9 +93,9 @@ const AddressModal = ({ setShowModal }) => {
                   htmlFor={option.type}
                   className={`${
                     addressType === option.type ? activeClass : inActiveClass
-                  } font-semibold text-xs cursor-pointer border-[1px] py-1 px-3 rounded-xl capitalize`}
+                  } font-semibold text-xs cursor-pointer border-[1px] py-1 px-3 rounded-xl`}
                 >
-                  {option.type}
+                  {capitalize(option.type)}
                 </label>
               </>
             ))}

@@ -1,21 +1,87 @@
 import LoginPage from "@/components/LoginPage";
+import { submitDataToApi } from "@/utils/api";
+import { useState } from "react";
+import { RiLoader4Fill } from "react-icons/ri";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+import { storeUser } from "@/utils/helper";
 
 const Login = () => {
+  const router = useRouter();
+  const [user, setUser] = useState({
+    identifier: "",
+    password: "",
+  });
+  const [loader, setLoader] = useState(false);
+
+  const notifyError = (errorMsg = "") => {
+    const errorText = errorMsg || "Something went wrong! Please try again.";
+    toast.error(errorText, {
+      position: "bottom-right",
+      theme: "dark",
+      closeButton: false,
+    });
+  };
+
+  const handleValueChange = ({ target }) => {
+    const { name, value } = target;
+    setUser((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoader(true);
+      const response = await submitDataToApi({
+        endpoint: `/api/auth/local`,
+        body: user,
+      });
+      setLoader(false);
+      if (`${response.statusCode}`.startsWith("2")) {
+        const user = {
+          id: response.data.user.id,
+          username: response.data.user.username,
+          phone: response.data.user.phone,
+          token: response.data.jwt,
+        };
+        storeUser(user);
+        router.push("/");
+      } else {
+        notifyError(response?.data?.error?.message);
+      }
+    } catch (err) {
+      notifyError();
+    }
+  };
+
   return (
     <LoginPage>
-      <form>
-        <label className="font-medium relative after:content-['*'] after:text-lg after:text-red-600 after:top-0 after:left-full">
-          Email
+      <form onSubmit={handleSubmit}>
+        <label
+          htmlFor="identifier"
+          className="font-medium px-3 relative after:content-['*'] after:text-lg after:text-red-600 after:top-0 after:left-full"
+        >
+          Enter mobile phone number or email
         </label>
         <br />
+
         <input
           className="outline-none border-[1px] px-4 py-2 rounded-full w-full mb-4"
-          type="email"
-          placeholder="Enter your email"
+          type="text"
+          placeholder="Enter your mobile number or email"
           required
+          pattern="^([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3})|(\d{3}-\d{3}-\d{4})$"
+          name="identifier"
+          id="identifier"
+          value={user.identifier}
+          onChange={handleValueChange}
         />
         <br />
-        <label className="mt-4 font-medium relative after:content-['*'] after:text-lg after:text-red-600 after:top-0 after:left-full">
+        <label className="mt-4 font-medium px-3 relative after:content-['*'] after:text-lg after:text-red-600 after:top-0 after:left-full">
           Password
         </label>
         <br />
@@ -23,16 +89,22 @@ const Login = () => {
           className="outline-none border-[1px] px-4 py-2 rounded-full w-full mb-4 font-[caption] placeholder:font-['Urbanist']"
           type="password"
           placeholder="Enter your password"
+          name="password"
+          id="password"
+          value={user.password}
+          onChange={handleValueChange}
           required
         />
         <br />
         <button
           type="submit"
-          className="bg-primary text-white font-semibold p-2 rounded-full w-full transition-transform active:scale-95 mt-2 mb-1 hover:brightness-90"
+          className="bg-primary text-white font-semibold p-2 outline-none rounded-full w-full transition-transform active:scale-95 mt-2 mb-1 hover:brightness-90 flex items-center justify-center gap-1"
         >
           Login
+          {loader ? <RiLoader4Fill className="animate-spin" /> : <></>}
         </button>
       </form>
+      <ToastContainer />
     </LoginPage>
   );
 };

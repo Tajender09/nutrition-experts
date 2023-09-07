@@ -12,9 +12,13 @@ import Image from "next/image";
 import Link from "next/link";
 import Menu from "./Menu";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import { fetchDataFromApi } from "@/utils/api";
+import { capitalize } from "@/utils/helper";
 
 const Header = ({ setShowMobileMenu }) => {
   const router = useRouter();
+  const productName = router?.query?.slug?.split("-")?.[0] || "Product Details";
   const headerTitles = {
     categories: "Shop by Categories",
     wishlist: "My Wishlist",
@@ -23,11 +27,20 @@ const Header = ({ setShowMobileMenu }) => {
     failed: "Payment Failed",
     address: "My Addresses",
     orders: "My Orders",
+    product: productName,
   };
   const activeTabStyles = "text-primary bg-secondary border-primary";
   const inActiveTabStyles = "text-disabled bg-dim_grey border-disabled";
-
   const nonHeaderRoutes = ["/login", "/signup"];
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    const { data } = await fetchDataFromApi("/api/categories");
+    setCategories(data);
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return nonHeaderRoutes.some((route) => route === router.pathname) ? (
     <></>
@@ -62,7 +75,7 @@ const Header = ({ setShowMobileMenu }) => {
               />
             ) : (
               <span className="font-semibold">
-                {headerTitles[router.pathname.split("/")[1]]}
+                {capitalize(headerTitles[router.pathname.split("/")[1]])}
               </span>
             )}
           </p>
@@ -164,7 +177,7 @@ const Header = ({ setShowMobileMenu }) => {
         ) : (
           <>
             {/* Desktop Menu Start */}
-            <Menu />
+            <Menu categories={categories} />
             {/* Desktop Menu End */}
 
             {/* Search Bar Start */}

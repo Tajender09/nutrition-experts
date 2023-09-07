@@ -2,7 +2,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import ProductCard from "./ProductCard";
 
-const RelatedProducts = () => {
+const RelatedProducts = ({ products = [] }) => {
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -25,12 +25,9 @@ const RelatedProducts = () => {
         containerClass="-mx-[10px]"
         itemClass="px-[10px]"
       >
-        <ProductCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1685195287/dymatize_0f5131032c.jpg" />
-        <ProductCard link="../optimum.jpg" />
-        <ProductCard link="../MuscleBlaze.jpg" />
-        <ProductCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1688062802/51vRHIuIG5L._SL1500_-removebg-preview_khhwc4.png" />
-        <ProductCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1688050458/81dBb89hyBL._SL1500_-removebg-preview_ilkevi.png" />
-        <ProductCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1688062801/ashvagandha-removebg-preview_isoed9.png" />
+        {products?.map((product) => (
+          <ProductCard data={product} key={product.id} />
+        ))}
       </Carousel>
       ;
     </div>

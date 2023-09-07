@@ -37,7 +37,7 @@ export const categoryItems = [
   },
 ];
 
-const Menu = () => {
+const Menu = ({ categories = [] }) => {
   const menuItems = [
     {
       id: 1,
@@ -75,12 +75,14 @@ const Menu = () => {
 
               {showMenu && (
                 <ul className="bg-white absolute top-full left-0 min-w-[250px] px-1 text-black shadow-lg">
-                  {categoryItems?.map((item) => (
+                  {categories?.map((item) => (
                     <li
                       key={item?.id}
                       className="h-12 px-3 hover:bg-black/[0.03] flex items-center"
                     >
-                      <Link href={item?.url}>{item?.name}</Link>
+                      <Link href={`/categories/${item?.attributes?.slug}`}>
+                        {item?.attributes?.name}
+                      </Link>
                     </li>
                   ))}
                 </ul>

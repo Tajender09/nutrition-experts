@@ -83,7 +83,7 @@ const LoginPage = ({ children }) => {
               <p className="inline-flex items-center gap-2 border-[1px] border-white rounded-full px-4 py-1">
                 <FiTruck />{" "}
                 <span className=" text-sm">
-                  Two Day Delivery in Jaipur Area
+                  Same Day Delivery in Jaipur Area
                 </span>
               </p>
             </div>

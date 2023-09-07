@@ -2,23 +2,20 @@ import HeroBanner from "@/components/HeroBanner";
 import MobileMenu from "@/components/MobileMenu";
 import ProductCard from "@/components/ProductCard";
 import Wrapper from "@/components/Wrapper";
-// import { fetchDataFromApi } from "@/utils/api";
+import { fetchDataFromApi } from "@/utils/api";
 import { useEffect } from "react";
 
-export default function Home({ showMobileMenu, setShowMobileMenu }) {
+export default function Home({
+  showMobileMenu,
+  setShowMobileMenu,
+  products = {},
+}) {
   useEffect(() => {
     return () => {
       setShowMobileMenu(false);
     };
   }, []);
-  const products = [
-    "/optimum.jpg",
-    "/MuscleBlaze.jpg",
-    "https://res.cloudinary.com/dybxysxcl/image/upload/v1685195287/dymatize_0f5131032c.jpg",
-    "/MuscleBlaze.jpg",
-    "https://res.cloudinary.com/dybxysxcl/image/upload/v1685195287/dymatize_0f5131032c.jpg",
-    "/optimum.jpg",
-  ];
+
   return (
     <main>
       <MobileMenu
@@ -38,8 +35,8 @@ export default function Home({ showMobileMenu, setShowMobileMenu }) {
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-14 px-5 md:px-0">
-          {products.map((product) => (
-            <ProductCard key={product} link={product} />
+          {products?.data?.map((product) => (
+            <ProductCard data={product} key={product?.id} />
           ))}
         </div>
       </Wrapper>
@@ -47,10 +44,10 @@ export default function Home({ showMobileMenu, setShowMobileMenu }) {
   );
 }
 
-// export const getServerSideProps = async () => {
-//   const products = await fetchDataFromApi("/api/products?populate=*");
+export const getServerSideProps = async () => {
+  const products = await fetchDataFromApi("/api/products?populate=*");
 
-//   return {
-//     props: { products },
-//   };
-// };
+  return {
+    props: { products },
+  };
+};
