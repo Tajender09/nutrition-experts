@@ -4,7 +4,7 @@ import { BiSearch, BiCategory } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import Wrapper from "./Wrapper";
 import { useRouter } from "next/router";
-
+import { useGetUserInfo } from "@/utils/customHooks";
 export const buttonDetails = {
   "/cart/checkout": {
     href: "/cart/address",
@@ -36,6 +36,7 @@ const navigationAllowedRoutes = [
 
 const BottomNavigation = () => {
   const router = useRouter();
+  const { userInfo, isLoggedIn } = useGetUserInfo();
   const bottomNavigationList = [
     {
       id: 1,
@@ -64,36 +65,40 @@ const BottomNavigation = () => {
   ];
 
   return navigationAllowedRoutes.includes(router.pathname) ? (
-    //shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]
-    <div className="h-16 w-full flex items-center fixed bottom-0 border-b-[1px] bg-white shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] lg:hidden">
-      <Wrapper className="flex items-center justify-between">
-        {router.pathname.includes("/cart") ? (
-          <Link
-            href={buttonDetails[router.pathname].href}
-            className="w-11/12 mx-auto bg-primary text-white text-sm font-semibold text-center p-2 md:w-3/4"
-          >
-            {buttonDetails[router.pathname].btnText}
-          </Link>
-        ) : (
-          bottomNavigationList.map((item) => {
-            return (
-              <Link
-                className={
-                  router.pathname === item.link
-                    ? "text-primary"
-                    : "text-disabled"
-                }
-                key={item.id}
-                href={item.link}
-              >
-                {item.icon}
-                <span className="text-xs font-semibold">{item.label}</span>
-              </Link>
-            );
-          })
-        )}
-      </Wrapper>
-    </div>
+    isLoggedIn && !userInfo?.cartItems?.length ? (
+      <></>
+    ) : (
+      //shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]
+      <div className="h-16 w-full flex items-center fixed bottom-0 border-b-[1px] bg-white shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] lg:hidden">
+        <Wrapper className="flex items-center justify-between">
+          {router.pathname.includes("/cart") ? (
+            <Link
+              href={buttonDetails[router.pathname].href}
+              className="w-11/12 mx-auto bg-primary text-white text-sm font-semibold text-center p-2 md:w-3/4"
+            >
+              {buttonDetails[router.pathname].btnText}
+            </Link>
+          ) : (
+            bottomNavigationList.map((item) => {
+              return (
+                <Link
+                  className={
+                    router.pathname === item.link
+                      ? "text-primary"
+                      : "text-disabled"
+                  }
+                  key={item.id}
+                  href={item.link}
+                >
+                  {item.icon}
+                  <span className="text-xs font-semibold">{item.label}</span>
+                </Link>
+              );
+            })
+          )}
+        </Wrapper>
+      </div>
+    )
   ) : (
     <></>
   );

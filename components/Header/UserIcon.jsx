@@ -2,16 +2,24 @@ import { FaRegUser } from "react-icons/fa";
 import { BsChevronDown } from "react-icons/bs";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { isLoggedIn, logUserOut } from "@/utils/helper";
 import { useRouter } from "next/router";
+import { useGetUserInfo } from "@/utils/customHooks";
+import { useDispatch } from "react-redux";
+import { clearUserData } from "@/store/userSlice";
 
 const UserIcon = () => {
   const [userMenuList, setUserMenuList] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
+  const { isLoggedIn } = useGetUserInfo();
+  const dispatch = useDispatch();
+
+  const logUserOut = () => {
+    dispatch(clearUserData());
+  };
 
   useEffect(() => {
-    if (isLoggedIn()) {
+    if (isLoggedIn) {
       setUserMenuList([
         {
           id: 1,

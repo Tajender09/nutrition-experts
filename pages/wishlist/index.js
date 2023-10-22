@@ -1,16 +1,72 @@
 import Wrapper from "@/components/Wrapper";
 import WishlistCard from "@/components/Wishlist/WishlistCard";
+import { useGetUserInfo } from "@/utils/customHooks";
+import { editApiData, fetchDataFromApi } from "@/utils/api";
+import { removeFromWishlist } from "@/store/userSlice";
+import { useDispatch } from "react-redux";
+import AddFromWishlistModal from "@/components/Modal/AddFromWishlist";
+import { useState } from "react";
 
 const Wishlist = () => {
+  const { userInfo, isLoggedIn } = useGetUserInfo();
+  const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
+  const [productInfo, setProductInfo] = useState({});
+
+  if (!isLoggedIn) {
+    return;
+  }
+
+  const removeItemFromWishlist = async (productId) => {
+    let wishlist = userInfo.wishlist.filter(
+      (product) => product.id !== productId
+    );
+    try {
+      const response = await editApiData({
+        endpoint: `/api/users/${userInfo.id}`,
+        body: { wishlist },
+        token: userInfo.token,
+      });
+      const data = await fetchDataFromApi(
+        `/api/users/${response?.data?.id}?populate[wishlist][populate]=thumbnail`,
+        userInfo.token
+      );
+      dispatch(removeFromWishlist(data?.wishlist));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const addItemToCart = (productInfo) => {
+    setProductInfo(productInfo);
+    setShowModal(true);
+  };
+
   return (
-    <Wrapper className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-3 md:px-0 gap-y-4 mt-5 mb-20 sm:gap-5">
-      <WishlistCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1685195287/dymatize_0f5131032c.jpg" />
-      <WishlistCard link="/optimum.jpg" />
-      <WishlistCard link="/MuscleBlaze.jpg" />
-      <WishlistCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1688062802/51vRHIuIG5L._SL1500_-removebg-preview_khhwc4.png" />
-      <WishlistCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1688050458/81dBb89hyBL._SL1500_-removebg-preview_ilkevi.png" />
-      <WishlistCard link="https://res.cloudinary.com/dybxysxcl/image/upload/v1688062801/ashvagandha-removebg-preview_isoed9.png" />
-    </Wrapper>
+    <>
+      <Wrapper className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-3 md:px-0 gap-y-4 mt-5 mb-20 sm:gap-5">
+        {userInfo?.wishlist?.map((item) => {
+          return (
+            <WishlistCard
+              key={item.id}
+              productInfo={item}
+              removeItemFromWishlist={removeItemFromWishlist}
+              addItemToCart={addItemToCart}
+            />
+          );
+        })}
+      </Wrapper>
+
+      {showModal ? (
+        <AddFromWishlistModal
+          productInfo={productInfo}
+          setShowModal={setShowModal}
+          removeItemFromWishlist={removeItemFromWishlist}
+        />
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 

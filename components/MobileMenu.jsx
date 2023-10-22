@@ -1,13 +1,28 @@
 import Wrapper from "./Wrapper";
 import { FaRegUser, FaChevronRight, FaRegHeart } from "react-icons/fa";
 import { HiX } from "react-icons/hi";
-import { RxDotFilled } from "react-icons/rx";
 import { AiOutlineFileText } from "react-icons/ai";
 import { IoLocationOutline } from "react-icons/io5";
-import { BiUser, BiCategory } from "react-icons/bi";
+import { BiCategory } from "react-icons/bi";
 import Link from "next/link";
+import { useGetUserInfo } from "@/utils/customHooks";
+import { useDispatch } from "react-redux";
+import { clearUserData } from "@/store/userSlice";
+import { useRouter } from "next/router";
 
 const MobileMenu = ({ showMobileMenu, setShowMobileMenu }) => {
+  const { isLoggedIn, userInfo } = useGetUserInfo();
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  // ---------- FUNCTIONS ---------- //
+  const userActionHandler = () => {
+    if (isLoggedIn) {
+      dispatch(clearUserData());
+    } else {
+      router.push("/login");
+    }
+  };
   return (
     <aside
       className={`fixed ${
@@ -26,10 +41,15 @@ const MobileMenu = ({ showMobileMenu, setShowMobileMenu }) => {
             />
           </div>
           <div className="flex items-center mt-1">
-            <p className="font-semibold">Tajender Batra</p>&nbsp;
-            <RxDotFilled />
+            <p className="font-semibold">
+              {isLoggedIn
+                ? userInfo.username
+                : "Please login to access account"}
+            </p>
             &nbsp;
-            <p className="text-sm font-medium">Male (22 years)</p>
+            {/* <RxDotFilled />
+            &nbsp;
+            <p className="text-sm font-medium">Male (22 years)</p> */}
           </div>
         </Wrapper>
       </div>
@@ -58,34 +78,41 @@ const MobileMenu = ({ showMobileMenu, setShowMobileMenu }) => {
         </Wrapper>
         <hr className="mt-6" />
       </div>
-      <div>
-        <Wrapper>
-          <Link
-            href="/orders"
-            className="flex justify-between items-center mt-6"
-          >
-            <span className="flex items-center gap-1 font-bold text-sm">
-              <AiOutlineFileText size={25} />
-              Order History
-            </span>
-            <FaChevronRight />
-          </Link>
-          <Link
-            href="/address"
-            className="flex justify-between items-center mt-6"
-          >
-            <span className="flex items-center gap-1 font-bold text-sm">
-              <IoLocationOutline size={25} />
-              Saved Addresses
-            </span>
-            <FaChevronRight />
-          </Link>
-        </Wrapper>
-        <hr className="mt-6" />
-      </div>
+      {isLoggedIn ? (
+        <div>
+          <Wrapper>
+            <Link
+              href="/orders"
+              className="flex justify-between items-center mt-6"
+            >
+              <span className="flex items-center gap-1 font-bold text-sm">
+                <AiOutlineFileText size={25} />
+                Order History
+              </span>
+              <FaChevronRight />
+            </Link>
+            <Link
+              href="/address"
+              className="flex justify-between items-center mt-6"
+            >
+              <span className="flex items-center gap-1 font-bold text-sm">
+                <IoLocationOutline size={25} />
+                Saved Addresses
+              </span>
+              <FaChevronRight />
+            </Link>
+          </Wrapper>
+          <hr className="mt-6" />
+        </div>
+      ) : (
+        <></>
+      )}
       <Wrapper className="absolute bottom-8">
-        <button className="w-full border-primary border-2 text-primary py-2 bg-white uppercase font-bold hover:bg-primary hover:text-white">
-          Logout
+        <button
+          onClick={userActionHandler}
+          className="w-full border-primary border-2 text-primary py-2 bg-white uppercase font-bold hover:bg-primary hover:text-white"
+        >
+          {isLoggedIn ? "Logout" : "Login"}
         </button>
       </Wrapper>
     </aside>

@@ -4,6 +4,10 @@ import { Montserrat } from "next/font/google";
 import Header from "@/components/Header/Header";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useState, useEffect } from "react";
+import { store } from "@/store/store";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -11,6 +15,7 @@ const montserrat = Montserrat({
 
 export default function App({ Component, pageProps }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  let persistor = persistStore(store);
 
   useEffect(() => {
     if (showMobileMenu) {
@@ -39,13 +44,17 @@ export default function App({ Component, pageProps }) {
           rel="stylesheet"
         />
       </Head>
-      <Header setShowMobileMenu={setShowMobileMenu} />
-      <Component
-        showMobileMenu={showMobileMenu}
-        setShowMobileMenu={setShowMobileMenu}
-        {...pageProps}
-      />
-      <BottomNavigation />
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <Header setShowMobileMenu={setShowMobileMenu} />
+          <Component
+            showMobileMenu={showMobileMenu}
+            setShowMobileMenu={setShowMobileMenu}
+            {...pageProps}
+          />
+          <BottomNavigation />
+        </PersistGate>
+      </Provider>
     </main>
   );
 }

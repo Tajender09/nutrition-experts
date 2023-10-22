@@ -2,28 +2,25 @@ import LoginPage from "@/components/LoginPage";
 import { submitDataToApi } from "@/utils/api";
 import { useState } from "react";
 import { RiLoader4Fill } from "react-icons/ri";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { storeUser } from "@/utils/helper";
+import { useDispatch } from "react-redux";
+import { addUserData } from "@/store/userSlice";
+import { notifyError } from "@/utils/notify";
 
 const Login = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  //---------- States ---------//
   const [user, setUser] = useState({
     identifier: "",
     password: "",
   });
   const [loader, setLoader] = useState(false);
 
-  const notifyError = (errorMsg = "") => {
-    const errorText = errorMsg || "Something went wrong! Please try again.";
-    toast.error(errorText, {
-      position: "bottom-right",
-      theme: "dark",
-      closeButton: false,
-    });
-  };
-
+  //---------- Functions ---------//
   const handleValueChange = ({ target }) => {
     const { name, value } = target;
     setUser((prev) => ({
@@ -41,19 +38,23 @@ const Login = () => {
         body: user,
       });
       setLoader(false);
+      console.log({ response });
       if (`${response.statusCode}`.startsWith("2")) {
         const user = {
           id: response.data.user.id,
           username: response.data.user.username,
           phone: response.data.user.phone,
           token: response.data.jwt,
+          previousOrders: response.data.user.previousOrders || [],
+          savedAddresses: response.data.user.savedAddresses || [],
         };
-        storeUser(user);
+        dispatch(addUserData(user));
         router.push("/");
       } else {
         notifyError(response?.data?.error?.message);
       }
     } catch (err) {
+      setLoader(false);
       notifyError();
     }
   };

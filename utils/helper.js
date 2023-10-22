@@ -1,3 +1,5 @@
+import { useSelector } from "react-redux";
+
 export const getDiscountPercent = (price, mrp) => {
   const discount = mrp - price;
 
@@ -18,15 +20,11 @@ export const capitalize = (string = "") => {
   return capitalizedArray.join(" ");
 };
 
-export const storeUser = (data) => {
-  localStorage.setItem("user", JSON.stringify(data));
-};
+export const formatDate = (dateString) => {
+  const [day, month, year] = dateString.split("/");
+  // Month is zero-based in JavaScript, so we subtract 1 from the month.
+  const date = new Date(year, month - 1, day);
 
-export const isLoggedIn = () => {
-  const stringifiedUser = localStorage.getItem("user") || '""';
-  return JSON.parse(stringifiedUser || {});
-};
-
-export const logUserOut = () => {
-  localStorage.clear();
+  const options = { year: "numeric", month: "short", day: "numeric" };
+  return date.toLocaleDateString("en-US", options);
 };

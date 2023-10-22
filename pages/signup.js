@@ -3,9 +3,10 @@ import { RiLoader4Fill } from "react-icons/ri";
 import { submitDataToApi } from "@/utils/api";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { storeUser } from "@/utils/helper";
+import { notifyError } from "@/utils/notify";
 
 const Signup = () => {
   const router = useRouter();
@@ -16,15 +17,6 @@ const Signup = () => {
     email: "",
     password: "",
   });
-
-  const notifyError = (errorMsg = "") => {
-    const errorText = errorMsg || "Something went wrong! Please try again.";
-    toast.error(errorText, {
-      position: "bottom-right",
-      theme: "dark",
-      closeButton: false,
-    });
-  };
 
   const handleValueChange = ({ target }) => {
     const { name, value } = target;
@@ -49,6 +41,9 @@ const Signup = () => {
           username: response.data.user.username,
           phone: response.data.user.phone,
           token: response.data.jwt,
+          previousOrders: [],
+          savedAddresses: [],
+          wishlist: [],
         };
         storeUser(user);
         router.push("/");

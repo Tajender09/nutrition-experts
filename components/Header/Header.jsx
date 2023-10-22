@@ -15,6 +15,9 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { fetchDataFromApi } from "@/utils/api";
 import { capitalize } from "@/utils/helper";
+import { useGetUserInfo } from "@/utils/customHooks";
+import { useDispatch } from "react-redux";
+import { addUserData } from "@/store/userSlice";
 
 const Header = ({ setShowMobileMenu }) => {
   const router = useRouter();
@@ -32,12 +35,42 @@ const Header = ({ setShowMobileMenu }) => {
   const activeTabStyles = "text-primary bg-secondary border-primary";
   const inActiveTabStyles = "text-disabled bg-dim_grey border-disabled";
   const nonHeaderRoutes = ["/login", "/signup"];
+  const dispatch = useDispatch();
+  const { isLoggedIn, userInfo } = useGetUserInfo();
+
+  // ---------- STATES ---------- //
   const [categories, setCategories] = useState([]);
 
+  // ---------- FUNCTIONS ---------- //
   const fetchCategories = async () => {
     const { data } = await fetchDataFromApi("/api/categories");
     setCategories(data);
   };
+
+  const getRemainingUserData = async () => {
+    const data = await fetchDataFromApi(
+      `/api/users/${userInfo.id}?populate[wishlist][populate]=thumbnail&populate[cartProducts][populate]=thumbnail`,
+      userInfo.token
+    );
+
+    const updatedUserInfo = {
+      ...userInfo,
+      previousOrders: data.previousOrders || [],
+      savedAddresses: data.savedAddresses || [],
+      wishlist: data?.wishlist || [],
+      cartItems: data?.cartItems || [],
+      cartProducts: data?.cartProducts || [],
+    };
+    dispatch(addUserData(updatedUserInfo));
+  };
+
+  // ---------- EFFECTS ---------- //
+  useEffect(() => {
+    if (isLoggedIn) {
+      getRemainingUserData();
+    }
+  }, [isLoggedIn]);
+
   useEffect(() => {
     fetchCategories();
   }, []);

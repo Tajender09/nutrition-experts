@@ -17,7 +17,7 @@ const Payment = () => {
     {
       id: 3,
       key: "debit",
-      text: "Debit Card",
+      text: "Debit/Credit Card",
       isDisabled: true,
     },
   ];
