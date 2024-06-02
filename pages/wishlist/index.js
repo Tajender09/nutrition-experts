@@ -6,6 +6,8 @@ import { removeFromWishlist } from "@/store/userSlice";
 import { useDispatch } from "react-redux";
 import AddFromWishlistModal from "@/components/Modal/AddFromWishlist";
 import { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Wishlist = () => {
   const { userInfo, isLoggedIn } = useGetUserInfo();
@@ -33,7 +35,7 @@ const Wishlist = () => {
       );
       dispatch(removeFromWishlist(data?.wishlist));
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -56,7 +58,7 @@ const Wishlist = () => {
           );
         })}
       </Wrapper>
-
+      <ToastContainer />
       {showModal ? (
         <AddFromWishlistModal
           productInfo={productInfo}

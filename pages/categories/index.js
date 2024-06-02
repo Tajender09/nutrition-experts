@@ -3,13 +3,13 @@ import CategoryTile from "@/components/CategoryTile";
 import { fetchDataFromApi } from "@/utils/api";
 
 const Categories = ({ categories = {} }) => {
-  const sortedCategories = categories?.data.sort(function (a, b) {
+  const sortedCategories = categories?.data?.sort(function (a, b) {
     return a.id - b.id;
   });
   return (
     <Wrapper>
       <div className="flex flex-wrap justify-evenly items-center lg:hidden">
-        {sortedCategories.map((item) => {
+        {sortedCategories?.map((item) => {
           return <CategoryTile categoryData={item} key={item.id} />;
         })}
       </div>

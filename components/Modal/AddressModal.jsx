@@ -60,9 +60,8 @@ const AddressModal = ({ addressToSend, userInfo, setShowModal }) => {
       });
       dispatch(addSavedAddress(response.data.savedAddresses));
       setShowModal(false);
-      console.log({ response });
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

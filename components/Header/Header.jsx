@@ -3,8 +3,7 @@ import CartIcon from "./CartIcon";
 import UserIcon from "./UserIcon";
 import { HiMenu } from "react-icons/hi";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiArrowBack } from "react-icons/bi";
-import { FaMicrophone } from "react-icons/fa";
+import { BiArrowBack, BiSearch } from "react-icons/bi";
 import { FiShoppingCart } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
 import { BsCreditCard2Back } from "react-icons/bs";
@@ -16,12 +15,15 @@ import { useState, useEffect } from "react";
 import { fetchDataFromApi } from "@/utils/api";
 import { capitalize } from "@/utils/helper";
 import { useGetUserInfo } from "@/utils/customHooks";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUserData } from "@/store/userSlice";
 
 const Header = ({ setShowMobileMenu }) => {
   const router = useRouter();
-  const productName = router?.query?.slug?.split("-")?.[0] || "Product Details";
+  const { currentProduct, products } = useSelector(
+    (state) => state.productSlice
+  );
+  const productName = currentProduct?.brand || "Product Details";
   const headerTitles = {
     categories: "Shop by Categories",
     wishlist: "My Wishlist",
@@ -40,6 +42,8 @@ const Header = ({ setShowMobileMenu }) => {
 
   // ---------- STATES ---------- //
   const [categories, setCategories] = useState([]);
+  const [searchParams, setSearchParams] = useState("");
+  const [searchedProducts, setSearchedProducts] = useState([]);
 
   // ---------- FUNCTIONS ---------- //
   const fetchCategories = async () => {
@@ -64,12 +68,36 @@ const Header = ({ setShowMobileMenu }) => {
     dispatch(addUserData(updatedUserInfo));
   };
 
+  const backHandler = () => {
+    if (searchedProducts.length) {
+      setSearchedProducts([]);
+    } else {
+      router.back();
+    }
+  };
+
   // ---------- EFFECTS ---------- //
   useEffect(() => {
     if (isLoggedIn) {
       getRemainingUserData();
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    let filteredProducts = products?.filter((product) => {
+      return (
+        searchParams.length &&
+        (product?.attributes?.name?.includes(searchParams) ||
+          product?.attributes?.brand?.includes(searchParams))
+      );
+    });
+    setSearchedProducts(filteredProducts);
+  }, [searchParams]);
+
+  useEffect(() => {
+    setSearchedProducts([]);
+    setSearchParams("");
+  }, [router.asPath]);
 
   useEffect(() => {
     fetchCategories();
@@ -99,19 +127,49 @@ const Header = ({ setShowMobileMenu }) => {
             />
           </div>
         ) : (
-          <p className="flex items-center gap-3 lg:hidden">
-            <BiArrowBack onClick={() => router.back()} size={22} />
+          <div className="w-full flex items-center gap-3 lg:hidden">
+            <BiArrowBack onClick={backHandler} size={22} />
             {router.pathname === "/search" ? (
-              <input
-                placeholder="Search for products or brands"
-                className="outline-none"
-              />
+              <div className="w-full">
+                <input
+                  placeholder="Search for products or brands"
+                  className="outline-none w-full"
+                  type="text"
+                  value={searchParams}
+                  onChange={(e) => setSearchParams(e.target.value)}
+                />
+                <div className="absolute bg-white w-screen left-0 top-full z-10">
+                  {searchedProducts?.length ? (
+                    searchedProducts?.map(({ attributes, id }) => (
+                      <Link
+                        href={`/product/${attributes?.slug}`}
+                        key={id}
+                        className="flex gap-3 items-center py-2 px-4 border-b-[1px] border-gray-300"
+                      >
+                        <span>
+                          <BiSearch className=" text-gray-400" size={18} />
+                        </span>
+                        <p className="truncate text-sm font-medium">
+                          {attributes?.name}
+                        </p>
+                      </Link>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                {searchedProducts?.length ? (
+                  <div className="absolute top-full left-0 h-screen w-screen bg-black opacity-70"></div>
+                ) : (
+                  <></>
+                )}
+              </div>
             ) : (
               <span className="font-semibold">
                 {capitalize(headerTitles[router.pathname.split("/")[1]])}
               </span>
             )}
-          </p>
+          </div>
         )}
         {/* Icons for Mobiles End */}
         {/* Company Logo */}
@@ -131,7 +189,7 @@ const Header = ({ setShowMobileMenu }) => {
         {/* Company Logo */}
         {router.pathname.includes("/cart") ? (
           <div className="flex justify-between items-center w-3/4 mt-3 mx-auto lg:m-0 lg:w-1/4 lg:justify-between lg:ml-[25%] lg:-translate-x-1/4">
-            <div className="flex flex-col items-center">
+            <Link href="/cart/checkout" className="flex flex-col items-center">
               <span
                 className={`${
                   router.pathname.includes("/cart")
@@ -148,7 +206,7 @@ const Header = ({ setShowMobileMenu }) => {
               >
                 Checkout
               </p>
-            </div>
+            </Link>
             <div
               className={`${
                 router.pathname.includes("/cart/address") ||
@@ -157,7 +215,15 @@ const Header = ({ setShowMobileMenu }) => {
                   : "bg-disabled"
               } w-1/4 h-[1px]`}
             />
-            <div className="flex flex-col items-center">
+            <Link
+              href="/cart/address"
+              className={`${
+                router.pathname.includes("/cart/address") ||
+                router.pathname === "/cart/payment"
+                  ? ""
+                  : "pointer-events-none"
+              } flex flex-col items-center`}
+            >
               <span
                 className={`${
                   router.pathname.includes("/cart/address") ||
@@ -178,7 +244,7 @@ const Header = ({ setShowMobileMenu }) => {
               >
                 Address
               </p>
-            </div>
+            </Link>
             <div
               className={`${
                 router.pathname === "/cart/payment"
@@ -214,24 +280,46 @@ const Header = ({ setShowMobileMenu }) => {
             {/* Desktop Menu End */}
 
             {/* Search Bar Start */}
-            <div className=" w-1/3 items-center p-3 bg-[#f7f7f7] rounded-xl hidden lg:flex">
+            <div className="relative w-1/3 items-center p-3 bg-[#f7f7f7] rounded-xl hidden lg:flex">
               <AiOutlineSearch size={20} className="text-[#696e79] mr-2" />
               <input
                 className="bg-[#f7f7f7] w-full outline-none placeholder-[#696e79]"
                 type="text"
                 placeholder={`Search for products, brands & more...`}
+                value={searchParams}
+                onChange={(e) => setSearchParams(e.target.value)}
               />
+              <div className="absolute top-full left-0 w-full rounded-b-xl bg-white shadow-lg">
+                {searchedProducts?.length ? (
+                  searchedProducts?.map(({ attributes, id }) => (
+                    <Link
+                      href={`/product/${attributes?.slug}`}
+                      key={id}
+                      className="flex gap-4 items-center py-2 px-3 hover:bg-gray-100 rounded-b-xl"
+                    >
+                      <Image
+                        src={attributes?.thumbnail?.data?.attributes?.url}
+                        height={25}
+                        width={25}
+                        className="h-3/4 w-auto object-contain"
+                        alt={attributes?.name}
+                      />
+                      <h5 className="truncate font-medium">
+                        {attributes?.name}
+                      </h5>
+                    </Link>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
             {/* Search Bar End */}
 
             {/* User Icon and Cart */}
             <div className="flex items-center h-full">
               <UserIcon />
-              {router.pathname === "/search" ? (
-                <FaMicrophone size={20} />
-              ) : (
-                <CartIcon />
-              )}
+              {router.pathname !== "/search" ? <CartIcon /> : <></>}
             </div>
             {/* User Icon and Cart */}
           </>

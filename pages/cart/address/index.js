@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 const Address = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const { userInfo, isLoggedIn } = useGetUserInfo();
-  const [selectedAddress, setSelectedAddress] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,7 +20,6 @@ const Address = () => {
     <CartPageSkeleton
       showAddressModal={showAddressModal}
       setShowAddressModal={setShowAddressModal}
-      selectedAddress={selectedAddress}
     >
       <div className="flex items-center justify-between gap-2 bg-white py-2 px-4 mt-3 md:rounded-md md:w-3/4 md:mx-auto lg:w-11/12">
         <h2 className="font-semibold hidden xs:block">
@@ -37,18 +35,12 @@ const Address = () => {
       </div>
       <div className="my-4">
         {!userInfo?.savedAddresses?.length ? (
-          <div className="bg-white w-full rounded-md md:w-3/4 md:mx-auto lg:w-11/12">
+          <div className="bg-white w-full rounded-md text-center py-4 md:w-3/4 md:mx-auto lg:w-11/12">
             No address found
           </div>
         ) : (
           userInfo?.savedAddresses?.map((address) => (
-            <AddressCard
-              isInCart={true}
-              addressData={address}
-              key={address}
-              setSelectedAddress={setSelectedAddress}
-              selectedAddress={selectedAddress}
-            />
+            <AddressCard isInCart={true} addressData={address} key={address} />
           ))
         )}
       </div>

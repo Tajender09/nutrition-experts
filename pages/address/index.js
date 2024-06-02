@@ -33,7 +33,6 @@ const SavedAddress = () => {
     const editableAddress = userInfo.savedAddresses.find(
       (address) => address.id === id
     );
-    console.log({ editableAddress });
     setAddressToSend(editableAddress);
   };
 
@@ -47,12 +46,10 @@ const SavedAddress = () => {
         body: { savedAddresses: updatedAddresses },
         token: userInfo.token,
       });
-      console.log({ response });
       dispatch(addSavedAddress(response.data.savedAddresses));
       setShowModal(false);
-      console.log({ response });
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

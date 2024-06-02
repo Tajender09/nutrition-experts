@@ -4,13 +4,17 @@ import ProductCard from "@/components/ProductCard";
 import Wrapper from "@/components/Wrapper";
 import { fetchDataFromApi } from "@/utils/api";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setProducts } from "@/store/productSlice";
 
 export default function Home({
   showMobileMenu,
   setShowMobileMenu,
   products = {},
 }) {
+  const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(setProducts(products?.data));
     return () => {
       setShowMobileMenu(false);
     };

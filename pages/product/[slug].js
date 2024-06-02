@@ -3,7 +3,12 @@ import ProductCarousel from "@/components/ProductDetails/ProductCarousel";
 import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import RelatedProducts from "@/components/RelatedProducts";
 import { editApiData, fetchDataFromApi } from "@/utils/api";
-import { amount, capitalize, getDiscountPercent } from "@/utils/helper";
+import {
+  amount,
+  capitalize,
+  getDiscountPercent,
+  getSizeString,
+} from "@/utils/helper";
 import { useState, useEffect } from "react";
 import { useGetUserInfo } from "@/utils/customHooks";
 import { useDispatch } from "react-redux";
@@ -14,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import { useRouter } from "next/router";
+import { setCurrentProduct } from "@/store/productSlice";
 
 const ProductDetails = ({ product, products }) => {
   const productDetails = product?.data?.[0]?.attributes || {};
@@ -26,7 +32,6 @@ const ProductDetails = ({ product, products }) => {
   const dispatch = useDispatch();
 
   const [selectedSize, setSelectedSize] = useState(productDetails?.size);
-  console.log({ productDetails, selectedSize, router });
   const [productPrice, setProductPrice] = useState(productDetails?.price);
   const [actualPrice, setActualPrice] = useState(productDetails?.mrp);
   const [selectedFlavour, setSelectedFlavour] = useState("");
@@ -92,7 +97,7 @@ const ProductDetails = ({ product, products }) => {
         );
         dispatch(addToWishlist(data?.wishlist));
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     } else alert("Please login to add to wishlist");
   };
@@ -119,6 +124,7 @@ const ProductDetails = ({ product, products }) => {
 
   useEffect(() => {
     setSelectedSize(productDetails?.size);
+    dispatch(setCurrentProduct(productDetails));
   }, [router.asPath]);
 
   return (
@@ -135,7 +141,8 @@ const ProductDetails = ({ product, products }) => {
           <div className="flex-[1] py-3">
             {/* PRODUCT TITLE */}
             <h1 className="text-[30px] leading-10 font-semibold mb-2">
-              {`${productDetails?.name}, ${selectedSize} ${capitalize(
+              {`${productDetails?.name}, ${getSizeString(
+                selectedSize,
                 productDetails?.sizeUnit
               )}${selectedFlavour ? ", " + capitalize(selectedFlavour) : ""}`}
             </h1>
@@ -190,7 +197,7 @@ const ProductDetails = ({ product, products }) => {
                       selectedSize === size ? "border-black" : ""
                     }`}
                   >
-                    {`${size} ${capitalize(productDetails?.sizeUnit)}`}
+                    {getSizeString(size, productDetails?.sizeUnit)}
                   </div>
                 ))}
               </div>
@@ -205,13 +212,13 @@ const ProductDetails = ({ product, products }) => {
                   <h2 className="text-md font-semibold">Select Flavour</h2>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
+                <div className="flex items-center flex-wrap gap-2">
                   {productDetails?.sizes?.map((sizeObj) => {
                     return +sizeObj?.size === selectedSize ? (
-                      sizeObj?.stock === "true" ? (
+                      sizeObj?.stock === "TRUE" ? (
                         <div
                           onClick={() => setSelectedFlavour(sizeObj?.flavour)}
-                          className={`border rounded-md text-center py-3 font-medium hover:border-black cursor-pointer ${
+                          className={`border px-2 rounded-md text-center py-3 font-medium hover:border-black cursor-pointer ${
                             selectedFlavour === sizeObj?.flavour
                               ? "border-black"
                               : ""
@@ -220,7 +227,7 @@ const ProductDetails = ({ product, products }) => {
                           {capitalize(sizeObj?.flavour)}
                         </div>
                       ) : (
-                        <div className="border rounded-md text-center py-3 font-medium cursor-not-allowed bg-black/[0.1] opacity-50">
+                        <div className="border px-4 rounded-md text-center py-3 font-medium cursor-not-allowed bg-black/[0.1] opacity-50">
                           {capitalize(sizeObj?.flavour)}
                         </div>
                       )

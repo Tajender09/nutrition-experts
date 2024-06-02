@@ -5,8 +5,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { storeUser } from "@/utils/helper";
+import { addUserData } from "@/store/userSlice";
 import { notifyError } from "@/utils/notify";
+import { useDispatch } from "react-redux";
 
 const Signup = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const dispatch = useDispatch();
 
   const handleValueChange = ({ target }) => {
     const { name, value } = target;
@@ -45,7 +47,7 @@ const Signup = () => {
           savedAddresses: [],
           wishlist: [],
         };
-        storeUser(user);
+        dispatch(addUserData(user));
         router.push("/");
       } else {
         notifyError(response?.data?.error?.message);

@@ -3,38 +3,19 @@ import { buttonDetails } from "@/components/BottomNavigation";
 import { useGetUserInfo } from "@/utils/customHooks";
 import { amount } from "@/utils/helper";
 import { notifyError } from "@/utils/notify";
+import { useSelector } from "react-redux";
+import { getCartData } from "./CartSummaryUtility";
 
-const CartSummary = ({ selectedAddress }) => {
+const CartSummary = () => {
   const router = useRouter();
   const { userInfo } = useGetUserInfo();
   const cartItems = userInfo?.cartItems || [];
   const cartProducts = userInfo?.cartProducts || [];
+  const selectedAddress = useSelector(
+    ({ orderSlice }) => orderSlice.selectedAddress
+  );
 
-  let totalDiscount = 0;
-
-  const totalPrice = cartItems?.reduce((acc, cartItem) => {
-    let currentProduct =
-      cartProducts?.find((product) => product?.id === cartItem?.productId) ||
-      {};
-
-    let currentSize = currentProduct?.hasFlavour
-      ? currentProduct?.sizes?.find(
-          (variant) =>
-            +variant?.size === cartItem?.selectedSize &&
-            variant?.flavour === cartItem?.selectedFlavour
-        )
-      : currentProduct?.sizes?.find(
-          (variant) => +variant?.size === cartItem?.selectedSize
-        );
-
-    acc = +currentSize?.mrp * cartItem?.quantity + acc;
-    totalDiscount =
-      totalDiscount +
-      (+currentSize?.mrp * cartItem?.quantity -
-        +currentSize?.price * cartItem?.quantity);
-    return acc;
-  }, 0);
-
+  const { totalDiscount, totalPrice } = getCartData(cartItems, cartProducts);
   const cartSummaryBtnHandler = (buttonDetails) => {
     let currentOrder = {};
 
@@ -42,8 +23,9 @@ const CartSummary = ({ selectedAddress }) => {
       currentOrder = { ...currentOrder, cartItems, cartProducts };
       router.push(buttonDetails[router.pathname]?.href);
     } else if (router.pathname === "/cart/address") {
-      if (selectedAddress === 0) {
+      if (selectedAddress === 0 || !userInfo?.savedAddresses?.length) {
         notifyError("Please select an address to proceed.");
+        return;
       } else {
         const address = userInfo?.savedAddresses?.find(
           (address) => address?.id === selectedAddress
@@ -51,8 +33,9 @@ const CartSummary = ({ selectedAddress }) => {
         currentOrder = { ...currentOrder, cartItems, cartProducts, address };
       }
       router.push(buttonDetails[router.pathname]?.href);
+    } else {
+      console.log({ currentOrder: { ...currentOrder } });
     }
-    console.log({ currentOrder });
   };
 
   return (
@@ -65,7 +48,7 @@ const CartSummary = ({ selectedAddress }) => {
         </div>
         <div className="flex justify-between items-center text-sm my-2">
           <p>Discount on MRP</p>
-          <p>{amount(totalDiscount)}</p>
+          <p className="text-[#03a685]">- {amount(totalDiscount)}</p>
         </div>
         <div className="flex justify-between items-center text-sm">
           <p>Delivery Fee</p>

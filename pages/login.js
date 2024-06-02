@@ -38,7 +38,6 @@ const Login = () => {
         body: user,
       });
       setLoader(false);
-      console.log({ response });
       if (`${response.statusCode}`.startsWith("2")) {
         const user = {
           id: response.data.user.id,

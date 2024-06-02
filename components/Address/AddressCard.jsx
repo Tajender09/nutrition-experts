@@ -1,16 +1,20 @@
 import { BiSolidEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { capitalize } from "@/utils/helper";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedAddress } from "@/store/orderSlice";
 
 const AddressCard = ({
   addressData,
   isInCart = false,
   editAddress = () => {},
   removeAddress = () => {},
-  setSelectedAddress = () => {},
-  selectedAddress = 0,
 }) => {
-  console.log({ addressData });
+  const dispatch = useDispatch();
+  const selectedAddress = useSelector(
+    ({ orderSlice }) => orderSlice.selectedAddress
+  );
+
   return (
     <>
       <label
@@ -25,7 +29,8 @@ const AddressCard = ({
                 type="radio"
                 id={addressData.id}
                 value={selectedAddress}
-                onChange={() => setSelectedAddress(addressData.id)}
+                checked={addressData.id === selectedAddress}
+                onChange={() => dispatch(setSelectedAddress(addressData.id))}
                 name="address"
                 className="absolute -left-5 accent-primary top-1"
               />

@@ -1,6 +1,18 @@
 import CartPageSkeleton from "@/components/Cart/CartPage";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { useGetUserInfo } from "@/utils/customHooks";
+import { setPaymentMethod } from "@/store/orderSlice";
 
 const Payment = () => {
+  const router = useRouter();
+  const selectedAddress = useSelector(
+    ({ orderSlice }) => orderSlice.selectedAddress
+  );
+  const { userInfo } = useGetUserInfo();
+  const dispatch = useDispatch();
+
   const paymentMethods = [
     {
       id: 1,
@@ -21,6 +33,12 @@ const Payment = () => {
       isDisabled: true,
     },
   ];
+
+  useEffect(() => {
+    if (selectedAddress === 0 || !userInfo?.savedAddresses?.length) {
+      router.push("/cart/address");
+    }
+  }, []);
 
   return (
     <CartPageSkeleton>

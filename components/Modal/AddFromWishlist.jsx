@@ -13,7 +13,6 @@ import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 const AddFromWishlistModal = ({ productInfo, setShowModal }) => {
   const { userInfo } = useGetUserInfo();
   const dispatch = useDispatch();
-  console.log({ productInfo });
   const [productPrice, setProductPrice] = useState(productInfo?.price);
   const [actualPrice, setActualPrice] = useState(productInfo?.mrp);
   const [selectedSize, setSelectedSize] = useState(productInfo?.size);

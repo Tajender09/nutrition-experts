@@ -13,7 +13,6 @@ const WishlistCard = ({
   const addToCartHandler = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log({ productInfo });
     addItemToCart(productInfo);
   };
 

@@ -13,7 +13,6 @@ import "react-toastify/dist/ReactToastify.css";
 const CartPageSkeleton = ({
   showAddressModal,
   setShowAddressModal,
-  selectedAddress,
   children,
 }) => {
   const router = useRouter();
@@ -78,7 +77,7 @@ const CartPageSkeleton = ({
               ) : (
                 <></>
               )}
-              <CartSummary selectedAddress={selectedAddress} />
+              <CartSummary />
             </div>
           </div>
         ) : (

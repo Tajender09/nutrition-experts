@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-
 export const getDiscountPercent = (price, mrp) => {
   const discount = mrp - price;
 
@@ -27,4 +25,16 @@ export const formatDate = (dateString) => {
 
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-US", options);
+};
+
+export const getSizeString = (size, unit = "kg") => {
+  let sizeString = size;
+  let sizeUnit = unit;
+
+  if (!Number.isInteger(size) && +size < 1 && unit === "kg") {
+    sizeString = size * 1000;
+    sizeUnit = "gm";
+  }
+
+  return `${sizeString} ${capitalize(sizeUnit)}`;
 };

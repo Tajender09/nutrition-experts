@@ -103,7 +103,6 @@ const CartCard = ({ productInfo }) => {
       notifyError();
     }
   };
-  console.log({ productInfo });
 
   return (
     <div className="relative bg-white mb-4 p-2 xs:p-0 border-[1px] h-36 rounded-md md:w-3/4 md:mx-auto lg:w-11/12 flex items-center">
@@ -123,7 +122,7 @@ const CartCard = ({ productInfo }) => {
         <p className="text-xs font-semibold mt-2 md:text-sm md:w-11/12">
           {productInfo?.brand}
         </p>
-        <p className="text-xs w-11/12 truncate sm:overflow-visible md:text-sm">
+        <p className="text-xs w-11/12 truncate md:text-sm">
           {productInfo?.name}
         </p>
         <div className="flex items-center mt-2">
@@ -164,7 +163,7 @@ const CartCard = ({ productInfo }) => {
             onClick={removeFromCart}
           />
         </div>
-        <div className="flex items-baseline gap-2 my-3">
+        <div className="flex items-baseline gap-2 my-2">
           <h2 className="font-semibold">
             {amount(
               productInfo?.currentSize?.price *
